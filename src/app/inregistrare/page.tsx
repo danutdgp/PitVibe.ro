@@ -7,7 +7,7 @@ import { signUp } from "../autentificare/actions";
 export const metadata = { title: "Creează cont" };
 export default async function RegisterPage({ searchParams }: { searchParams: Promise<{ eroare?: string }> }) {
   const params = await searchParams; const configured = isSupabaseConfigured();
-  return <AuthShell title="Intră în comunitate" subtitle="Contul este gratuit. După înregistrare îți vei configura profilul." footer={<>Ai deja cont? <Link className="font-semibold text-violet-300" href="/autentificare">Autentifică-te</Link></>}>
+  return <AuthShell title="Intră în comunitate" subtitle="Contul este gratuit. După confirmarea e-mailului îți vei configura profilul." footer={<><span>Ai deja cont? <Link className="font-semibold text-violet-300" href="/autentificare">Autentifică-te</Link></span><span className="mt-3 block"><Link className="text-xs text-[#827b8e] underline" href="/auth/iesire">Resetează sesiunea blocată</Link></span></>}>
     <FormMessage error={params.eroare ?? (!configured ? "Conectează proiectul Supabase în .env.local pentru a activa înregistrarea." : undefined)} />
     <form action={signUp} className="space-y-5"><fieldset className="contents" disabled={!configured}>
       <input className="hidden" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" />
