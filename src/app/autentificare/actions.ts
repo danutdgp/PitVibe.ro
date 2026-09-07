@@ -28,8 +28,9 @@ export async function signUp(formData: FormData) {
   if (password.length < 8) withMessage("/inregistrare", "eroare", "Parola trebuie să aibă cel puțin 8 caractere.");
   const supabase = await createClient();
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
-  const { error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo: `${siteUrl}/auth/callback?next=/bun-venit` } });
+  const { data, error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo: `${siteUrl}/auth/callback?next=/bun-venit` } });
   if (error) withMessage("/inregistrare", "eroare", "Contul nu a putut fi creat. Verifică datele sau încearcă mai târziu.");
+  if (data.session) redirect("/bun-venit");
   withMessage("/autentificare", "mesaj", "Ți-am trimis un e-mail de confirmare. Deschide linkul pentru a continua.");
 }
 
