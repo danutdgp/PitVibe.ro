@@ -1,0 +1,1 @@
+export default function Loading() { return <div aria-label="Se încarcă" className="space-y-4"><div className="h-9 w-56 animate-pulse rounded-xl bg-white/8" /><div className="h-14 animate-pulse rounded-xl bg-white/6" /><div className="h-64 animate-pulse rounded-3xl bg-white/6" /></div>; }

@@ -1,0 +1,4 @@
+import Link from "next/link";
+import { createClient } from "@/lib/supabase/server";
+
+export default async function PublicProfileLayout({ children, params }: { children: React.ReactNode; params: Promise<{ username: string }> }) { const { username } = await params; const supabase = await createClient(); const { data: { user } } = await supabase.auth.getUser(); const { data: profile } = await supabase.from("profiles").select("id").eq("username", username).maybeSingle(); const other = profile && profile.id !== user?.id; return <>{children}{other && <div className="mt-6 flex gap-3 border-t border-white/8 pt-5"><Link className="button-primary flex-1" href={`/mesaje/noi?username=${encodeURIComponent(username)}`}>Trimite mesaj</Link><Link className="button-secondary" href={`/raporteaza/profile/${profile.id}?return=/profil/${encodeURIComponent(username)}`}>Raportează profilul</Link></div>}</>; }

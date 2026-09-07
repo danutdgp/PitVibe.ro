@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PitiVibe
 
-## Getting Started
+Rețea socială locală pentru oamenii din Pitești, construită cu Next.js, TypeScript, Tailwind CSS și Supabase. Domeniul de producție pregătit este `pitivibe.ro`.
 
-First, run the development server:
+## Pornire locală
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. Instalează Node.js 24 LTS și rulează `npm install`.
+2. Copiază `.env.example` ca `.env.local` și completează valorile proiectului Supabase.
+3. Aplică migrațiile din `supabase/migrations` într-un proiect Supabase de dezvoltare (CLI: `supabase db push`, după conectarea proiectului).
+4. În Supabase Authentication activează autentificarea prin e-mail/parolă și confirmarea e-mailului.
+5. Adaugă `http://localhost:3000/auth/callback` la Redirect URLs, apoi rulează `npm run dev`.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Nu folosi proiectul sau datele de producție pentru dezvoltare și nu comite `.env.local`. Cheia `SUPABASE_SERVICE_ROLE_KEY` este exclusiv pentru codul executat pe server.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Configurare Supabase
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Migrațiile creează profilurile publice, datele private de vârstă, rolurile, interesele, urmăririle, blocările, postările și interacțiunile, jurnalul de moderare și bucketurile private pentru fotografii. Un trigger creează automat profilul și rolul `user` la înregistrare. Data nașterii este separată de profilul public și validată 13+ atât pe server, cât și în baza de date.
 
-## Learn More
+Pentru e-mailurile de autentificare, configurează un furnizor SMTP propriu înainte de lansare și personalizează șabloanele în română. Păstrează limitele anti-abuz Supabase active; CAPTCHA se va configura înainte de publicarea publică.
 
-To learn more about Next.js, take a look at the following resources:
+## Publicare pe Vercel
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Importă repository-ul și setează directorul aplicației la `pitivibe-app` dacă repository-ul păstrează structura actuală.
+- Adaugă aceleași variabile de mediu, cu `NEXT_PUBLIC_SITE_URL=https://pitivibe.ro`.
+- În Supabase setează Site URL la `https://pitivibe.ro` și adaugă `https://pitivibe.ro/auth/callback` la Redirect URLs.
+- Conectează domeniul `pitivibe.ro` în Vercel după configurarea DNS; publicarea efectivă nu face parte din această etapă.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## PWA și instalare
 
-## Deploy on Vercel
+Manifestul, pictogramele, modul standalone, service worker-ul și pagina offline sunt configurate fără o dependență externă. Service worker-ul păstrează în cache numai pagina publică offline; nu salvează feedul, profilurile, mesajele sau alte răspunsuri autentificate. Instalarea necesită HTTPS în producție. Instrucțiunile pentru Android, desktop și iPhone sunt disponibile la `/instaleaza`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Reclame și consimțământ
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+AdSense este dezactivat implicit prin `NEXT_PUBLIC_ADSENSE_ENABLED=false`. Nu adăuga un ID demonstrativ. După aprobarea domeniului, configurează identificatorul real în `NEXT_PUBLIC_ADSENSE_CLIENT`, publică fișierul `ads.txt` exact cum este furnizat de Google și activează reclamele numai după integrarea unei CMP certificate de Google pentru SEE/Regatul Unit/Elveția. Mesajele și conversațiile private trebuie să rămână neeligibile pentru reclame.
+
+## Siguranță și copii de rezervă
+
+RLS trebuie să rămână activ pentru toate tabelele. Înainte de lansare, configurează backupurile bazei în funcție de planul Supabase și o procedură separată de export/verificare pentru fișierele Storage. Testează restaurarea într-un proiect separat; un backup neverificat nu este suficient.
+
+## Stadiu
+
+Etapele 1–4 includ fundația vizuală responsive, autentificarea, profilurile, postările, descoperirea, ieșirile, conversațiile prin cereri, notificările, blocările și raportările. PWA-ul instalabil, starea offline și proiectele inițiale pentru paginile juridice sunt implementate. Datele operatorului și textele juridice trebuie completate și verificate înainte de lansare. Promovările sponsorizate și statisticile lor reprezintă următoarea subetapă; AdSense rămâne dezactivat.

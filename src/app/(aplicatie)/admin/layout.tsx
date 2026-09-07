@@ -1,0 +1,5 @@
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+
+export default async function AdminLayout({ children }: { children: React.ReactNode }) { const supabase = await createClient(); const { data: { user } } = await supabase.auth.getUser(); const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", user!.id); if (!roles?.some(({ role }) => role === "moderator" || role === "admin")) notFound(); return <><nav className="mb-7 flex gap-2 overflow-x-auto border-b border-white/8 pb-3 text-sm"><Link className="shrink-0 rounded-full bg-white/6 px-4 py-2" href="/admin">Sumar</Link><Link className="shrink-0 rounded-full bg-white/6 px-4 py-2" href="/admin/raportari">Raportări</Link><Link className="shrink-0 rounded-full bg-white/6 px-4 py-2" href="/admin/locuri">Locuri</Link><Link className="shrink-0 rounded-full bg-white/6 px-4 py-2" href="/admin/evenimente">Evenimente</Link><Link className="shrink-0 rounded-full bg-white/6 px-4 py-2" href="/admin/jurnal">Jurnal</Link></nav>{children}</>; }

@@ -1,0 +1,16 @@
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+
+const value = (data: FormData, key: string) => String(data.get(key) ?? "").trim();
+async function auth() { const supabase = await createClient(); const { data: { user } } = await supabase.auth.getUser(); if (!user) redirect("/autentificare"); return { supabase, user }; }
+
+export async function requestConversation(data: FormData) { const recipient = value(data, "recipient_id"); const message = value(data, "mesaj"); const username = value(data, "username"); if (!message || message.length > 4000) redirect(`/mesaje/noi?username=${encodeURIComponent(username)}&eroare=Mesajul%20nu%20este%20valid.`); const { supabase } = await auth(); const { data: id, error } = await supabase.rpc("request_conversation", { target_recipient: recipient, initial_message: message }); if (error) redirect(`/mesaje/noi?username=${encodeURIComponent(username)}&eroare=${encodeURIComponent("Cererea nu a putut fi trimisă. Poate există deja o conversație.")}`); redirect(`/mesaje/${id}`); }
+export async function respondConversation(data: FormData) { const id = value(data, "conversation_id"); const decision = value(data, "decizie"); const { supabase, user } = await auth(); await supabase.from("conversations").update({ status: decision === "accept" ? "accepted" : "rejected", responded_at: new Date().toISOString() }).eq("id", id).eq("recipient_id", user.id).eq("status", "requested"); revalidatePath("/mesaje"); if (decision === "accept") redirect(`/mesaje/${id}`); }
+export async function sendMessage(data: FormData) { const id = value(data, "conversation_id"); const content = value(data, "mesaj"); if (!content || content.length > 4000) return; const { supabase, user } = await auth(); await supabase.from("messages").insert({ conversation_id: id, sender_id: user.id, content }); revalidatePath(`/mesaje/${id}`); }
+export async function blockUser(data: FormData) { const target = value(data, "user_id"); const { supabase, user } = await auth(); if (target !== user.id) await supabase.from("blocks").upsert({ blocker_id: user.id, blocked_id: target }); revalidatePath("/mesaje"); redirect("/mesaje"); }
+export async function unblockUser(data: FormData) { const target = value(data, "user_id"); const { supabase, user } = await auth(); await supabase.from("blocks").delete().eq("blocker_id", user.id).eq("blocked_id", target); revalidatePath("/setari"); }
+export async function reportContent(data: FormData) { const type = value(data, "target_type"); const id = value(data, "target_id"); const reason = value(data, "motiv"); const details = value(data, "detalii"); const returnTo = value(data, "return_to"); const { supabase } = await auth(); const { error } = await supabase.rpc("report_content", { report_type: type, report_target: id, report_reason: reason, report_details: details }); const safeReturn = returnTo.startsWith("/") && !returnTo.startsWith("//") ? returnTo : "/acasa"; redirect(`${safeReturn}?raport=${error ? "eroare" : "trimis"}`); }
+export async function markNotificationsRead() { const { supabase, user } = await auth(); await supabase.from("notifications").update({ read_at: new Date().toISOString() }).eq("recipient_id", user.id).is("read_at", null); revalidatePath("/notificari"); }

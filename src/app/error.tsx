@@ -1,0 +1,2 @@
+"use client";
+export default function GlobalError({ reset }: { error: Error & { digest?: string }; reset: () => void }) { return <main className="grid min-h-screen place-items-center px-5"><div className="card max-w-md p-8 text-center"><p className="text-sm font-bold text-violet-300">Ceva nu a mers</p><h1 className="mt-3 text-2xl font-black">Nu am putut încărca pagina</h1><p className="mt-3 leading-7 text-[#aaa4b8]">Verifică legătura la internet și încearcă din nou.</p><button className="button-primary mt-6" onClick={reset}>Încearcă din nou</button></div></main>; }
