@@ -6,6 +6,14 @@ import { createAdminClient } from "@/lib/supabase/admin";
 
 function value(formData: FormData, key: string) { return String(formData.get(key) ?? "").trim(); }
 function withMessage(path: string, key: "eroare" | "mesaj", message: string) { redirect(`${path}?${key}=${encodeURIComponent(message)}`); }
+function signUpErrorMessage(code?: string) {
+  if (code === "email_address_invalid") return "Adresa de e-mail nu este validă.";
+  if (code === "user_already_exists" || code === "email_exists") return "Există deja un cont cu această adresă de e-mail.";
+  if (code === "weak_password") return "Parola este prea slabă. Folosește minimum 8 caractere, inclusiv litere și cifre.";
+  if (code === "over_request_rate_limit" || code === "over_email_send_rate_limit") return "Au fost prea multe încercări. Așteaptă câteva minute și încearcă din nou.";
+  if (code === "signup_disabled") return "Crearea conturilor este momentan dezactivată.";
+  return "Contul nu a putut fi creat momentan. Verifică datele și încearcă din nou.";
+}
 
 export async function signIn(formData: FormData) {
   const email = value(formData, "email");
@@ -21,15 +29,16 @@ export async function signIn(formData: FormData) {
 
 export async function signUp(formData: FormData) {
   if (value(formData, "website")) redirect("/");
-  const email = value(formData, "email");
+  const email = value(formData, "email").toLowerCase();
   const password = value(formData, "parola");
   const confirmedAge = formData.get("varsta_confirmata") === "on";
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) withMessage("/inregistrare", "eroare", "Introdu o adresă de e-mail validă.");
   if (!confirmedAge) withMessage("/inregistrare", "eroare", "Trebuie să confirmi că ai cel puțin 13 ani.");
   if (password.length < 8) withMessage("/inregistrare", "eroare", "Parola trebuie să aibă cel puțin 8 caractere.");
   const supabase = await createClient();
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
   const { data, error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo: `${siteUrl}/auth/callback?next=/bun-venit` } });
-  if (error) withMessage("/inregistrare", "eroare", "Contul nu a putut fi creat. Verifică datele sau încearcă mai târziu.");
+  if (error) withMessage("/inregistrare", "eroare", signUpErrorMessage(error.code));
   if (data.session) redirect("/bun-venit");
   withMessage("/autentificare", "mesaj", "Ți-am trimis un e-mail de confirmare. Deschide linkul pentru a continua.");
 }
