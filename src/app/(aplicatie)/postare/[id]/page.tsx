@@ -13,7 +13,7 @@ function CommentCard({ comment, replies, postId, userId, nested = false }: { com
   const author = relatedRow(comment.profiles);
   const own = comment.author_id === userId;
   return <article className={`rounded-2xl border border-white/8 p-4 ${nested ? "bg-white/[.025]" : "bg-white/[.035]"}`}>
-    <div className="flex items-baseline justify-between gap-3"><Link href={`/profil/${author?.username ?? ""}`} className="text-sm font-bold">{author?.display_name ?? "Membru PitiVibe"}</Link><time className="text-xs text-[#777181]">{new Intl.DateTimeFormat("ro-RO", { dateStyle: "medium", timeStyle: "short" }).format(new Date(comment.created_at))}</time></div>
+    <div className="flex items-baseline justify-between gap-3"><Link href={`/profil/${author?.username ?? ""}`} className="text-sm font-bold">{author?.display_name ?? "Membru PitVibe.ro"}</Link><time className="text-xs text-[#777181]">{new Intl.DateTimeFormat("ro-RO", { dateStyle: "medium", timeStyle: "short" }).format(new Date(comment.created_at))}</time></div>
     <p className="mt-2 whitespace-pre-wrap leading-6 text-[#d8d2df]">{comment.content}</p>
     <div className="mt-3 flex items-center gap-3 text-xs">
       {own ? <><Link className="text-violet-300" href={`/comentariu/${comment.id}/editeaza?post=${postId}`}>Editează</Link><form action={deleteComment}><input type="hidden" name="comment_id" value={comment.id} /><input type="hidden" name="post_id" value={postId} /><button className="text-red-300">Șterge</button></form></> : <Link className="text-red-300" href={`/raporteaza/comment/${comment.id}?return=/postare/${postId}`}>Raportează</Link>}

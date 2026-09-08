@@ -14,7 +14,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
     <form action={signIn} className="space-y-5"><fieldset className="contents" disabled={!configured}>
       <label className="block"><span className="mb-2 block text-sm font-semibold">E-mail</span><input className="field" name="email" type="email" autoComplete="email" required placeholder="nume@exemplu.ro" /></label>
       <label className="block"><span className="mb-2 flex justify-between text-sm font-semibold">Parolă <Link className="font-normal text-violet-300" href="/parola-uitata">Ai uitat parola?</Link></span><input className="field" name="parola" type="password" autoComplete="current-password" required /></label>
-      <button className="button-primary w-full" type="submit">Intră în PitiVibe</button>
+      <button className="button-primary w-full" type="submit">Intră în PitVibe.ro</button>
     </fieldset></form>
   </AuthShell>;
 }

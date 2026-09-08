@@ -29,7 +29,7 @@ export default async function Home() {
           <p className="mt-7 max-w-xl text-lg leading-8 text-[#b9b3c5]">Descoperă oameni, povești și ieșiri din Pitești. O comunitate locală construită pentru conexiuni reale.</p>
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">
             <Link className="button-primary" href="/inregistrare">Creează cont gratuit</Link>
-            <a className="button-secondary" href="#descopera">Descoperă PitiVibe</a>
+            <a className="button-secondary" href="#descopera">Descoperă PitVibe.ro</a>
           </div>
           <p className="mt-4 text-xs text-[#888190]">Acces 13+ · Orașul și identitatea sunt declarate, nu verificate.</p>
         </div>

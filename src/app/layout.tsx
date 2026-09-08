@@ -9,11 +9,11 @@ const geist = Geist({ variable: "--font-geist", subsets: ["latin"] });
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
-  title: { default: "PitiVibe — Piteștiul, mai aproape", template: "%s | PitiVibe" },
+  title: { default: "PitVibe.ro — Piteștiul, mai aproape", template: "%s | PitVibe.ro" },
   description: "Comunitatea locală în care descoperi oameni, povești și ieșiri din Pitești.",
-  applicationName: "PitiVibe",
+  applicationName: "PitVibe.ro",
   manifest: "/manifest.webmanifest",
-  appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: "PitiVibe" },
+  appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: "PitVibe.ro" },
   formatDetection: { telephone: false },
 };
 

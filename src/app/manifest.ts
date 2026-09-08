@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "PitiVibe — Piteștiul, mai aproape",
-    short_name: "PitiVibe",
+    name: "PitVibe.ro — Piteștiul, mai aproape",
+    short_name: "PitVibe.ro",
     description: "Comunitatea locală pentru oameni, povești și ieșiri din Pitești.",
     start_url: "/",
     scope: "/",

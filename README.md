@@ -1,6 +1,6 @@
-# PitiVibe
+# PitVibe.ro
 
-Rețea socială locală pentru oamenii din Pitești, construită cu Next.js, TypeScript, Tailwind CSS și Supabase. Domeniul de producție pregătit este `pitivibe.ro`.
+Rețea socială locală pentru oamenii din Pitești, construită cu Next.js, TypeScript, Tailwind CSS și Supabase. Domeniul de producție pregătit este `pitvibe.ro`.
 
 ## Pornire locală
 
@@ -20,10 +20,10 @@ Pentru e-mailurile de autentificare, configurează un furnizor SMTP propriu îna
 
 ## Publicare pe Vercel
 
-- Importă repository-ul și setează directorul aplicației la `pitivibe-app` dacă repository-ul păstrează structura actuală.
-- Adaugă aceleași variabile de mediu, cu `NEXT_PUBLIC_SITE_URL=https://pitivibe.ro`.
-- În Supabase setează Site URL la `https://pitivibe.ro` și adaugă `https://pitivibe.ro/auth/callback` la Redirect URLs.
-- Conectează domeniul `pitivibe.ro` în Vercel după configurarea DNS; publicarea efectivă nu face parte din această etapă.
+- Importă repository-ul și setează directorul aplicației la `pitvibe-app` dacă repository-ul păstrează structura actuală.
+- Adaugă aceleași variabile de mediu, cu `NEXT_PUBLIC_SITE_URL=https://pitvibe.ro`.
+- În Supabase setează Site URL la `https://pitvibe.ro` și adaugă `https://pitvibe.ro/auth/callback` la Redirect URLs.
+- Conectează domeniul `pitvibe.ro` în Vercel după configurarea DNS.
 
 ## PWA și instalare
 

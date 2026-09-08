@@ -1,4 +1,4 @@
-const CACHE_NAME = "pitivibe-offline-v1";
+const CACHE_NAME = "pitvibe-offline-v2";
 const OFFLINE_URL = "/offline";
 
 self.addEventListener("install", (event) => {

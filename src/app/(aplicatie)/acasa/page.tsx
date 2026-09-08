@@ -15,7 +15,7 @@ export default async function FeedPage({ searchParams }: { searchParams: Promise
   const { data: { user } } = await supabase.auth.getUser();
 
   return <>
-    <div><p className="text-sm font-semibold text-violet-300">Bun venit pe PitiVibe</p><h1 className="mt-1 text-3xl font-black tracking-[-.04em]">Ce mai e nou prin oraș?</h1></div>
+    <div><p className="text-sm font-semibold text-violet-300">Bun venit pe PitVibe.ro</p><h1 className="mt-1 text-3xl font-black tracking-[-.04em]">Ce mai e nou prin oraș?</h1></div>
     <StoriesBar groups={storyData.groups} currentUserId={storyData.currentUserId} />
     <AccountSuggestions />
     <div className="mt-7 flex gap-2 border-b border-white/8"><Link href="/acasa" className={`border-b-2 px-4 pb-3 text-sm font-bold ${scope === "pitesti" ? "border-violet-400 text-white" : "border-transparent text-[#827b8e]"}`}>Pitești</Link><Link href="/acasa?flux=urmaresc" className={`border-b-2 px-4 pb-3 text-sm font-bold ${scope === "urmaresc" ? "border-violet-400 text-white" : "border-transparent text-[#827b8e]"}`}>Urmăresc</Link></div>

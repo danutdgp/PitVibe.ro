@@ -82,7 +82,7 @@ export async function completeProfile(formData: FormData) {
   const threshold = new Date(); threshold.setFullYear(threshold.getFullYear() - 13);
   if (!/^[a-z0-9_]{3,24}$/.test(username)) withMessage("/bun-venit", "eroare", "Username-ul acceptă 3–24 de litere mici, cifre și _.");
   if (displayName.length < 2 || displayName.length > 50) withMessage("/bun-venit", "eroare", "Numele afișat trebuie să aibă între 2 și 50 de caractere.");
-  if (!birthDate || new Date(`${birthDate}T00:00:00`) > threshold) withMessage("/bun-venit", "eroare", "PitiVibe este disponibil persoanelor care au împlinit 13 ani.");
+  if (!birthDate || new Date(`${birthDate}T00:00:00`) > threshold) withMessage("/bun-venit", "eroare", "PitVibe.ro este disponibil persoanelor care au împlinit 13 ani.");
   const { error: privateError } = await supabase.from("profile_private").upsert({ user_id: user.id, birth_date: birthDate });
   if (privateError) withMessage("/bun-venit", "eroare", "Data nașterii nu a putut fi salvată.");
   if (selectedArea) {

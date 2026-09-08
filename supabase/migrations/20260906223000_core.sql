@@ -1,4 +1,4 @@
--- PitiVibe: fundația conturilor, profilurilor și autorizării.
+-- PitVibe.ro: fundația conturilor, profilurilor și autorizării.
 create extension if not exists citext with schema extensions;
 
 create type public.app_role as enum ('user', 'moderator', 'admin');
@@ -9,7 +9,7 @@ create type public.follow_status as enum ('pending', 'accepted');
 create table public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   username extensions.citext not null unique,
-  display_name text not null default 'Membru PitiVibe',
+  display_name text not null default 'Membru PitVibe.ro',
   bio text not null default '',
   city text not null default 'Pitești',
   avatar_path text,
@@ -103,7 +103,7 @@ create trigger profile_private_set_updated_at before update on public.profile_pr
 
 create or replace function public.enforce_minimum_age() returns trigger language plpgsql set search_path = '' as $$
 begin
-  if new.birth_date > (current_date - interval '13 years')::date then raise exception 'PitiVibe este disponibil persoanelor de cel puțin 13 ani'; end if;
+  if new.birth_date > (current_date - interval '13 years')::date then raise exception 'PitVibe.ro este disponibil persoanelor de cel puțin 13 ani'; end if;
   if new.birth_date < (current_date - interval '120 years')::date then raise exception 'Data nașterii nu este validă'; end if;
   return new;
 end;
@@ -132,7 +132,7 @@ create or replace function public.handle_new_user() returns trigger
 language plpgsql security definer set search_path = '' as $$
 begin
   insert into public.profiles (id, username, display_name)
-  values (new.id, ('membru_' || left(replace(new.id::text, '-', ''), 12))::extensions.citext, 'Membru PitiVibe');
+  values (new.id, ('membru_' || left(replace(new.id::text, '-', ''), 12))::extensions.citext, 'Membru PitVibe.ro');
   insert into public.user_roles (user_id, role) values (new.id, 'user');
   return new;
 end;
