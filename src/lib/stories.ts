@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 
-export type StoryItem = { id: string; mediaUrl: string; mediaType: "image" | "video"; createdAt: string; expiresAt: string; viewed: boolean; viewCount: number };
+export type StoryItem = { id: string; mediaUrl: string; mediaType: "image" | "video"; createdAt: string; expiresAt: string; viewed: boolean; viewCount: number; likeCount: number; liked: boolean };
 export type StoryGroup = { authorId: string; username: string; displayName: string; avatarUrl: string | null; stories: StoryItem[]; allViewed: boolean };
 
 function relatedRow<T>(value: T | T[] | null): T | null {
@@ -18,6 +18,8 @@ export async function getStoryGroups() {
   const storyIds = rows.map((story) => story.id);
   const { data: views } = storyIds.length ? await supabase.from("story_views").select("story_id").eq("viewer_id", user.id).in("story_id", storyIds) : { data: [] };
   const viewedIds = new Set((views ?? []).map((view) => view.story_id));
+  const { data: likes } = storyIds.length ? await supabase.from("story_likes").select("story_id, user_id").in("story_id", storyIds) : { data: [] };
+  const likedIds = new Set((likes ?? []).filter((like) => like.user_id === user.id).map((like) => like.story_id));
   const mediaPaths = rows.map((story) => story.media_path);
   const avatarPaths = [...new Set(rows.map((story) => relatedRow(story.profiles)?.avatar_path).filter(Boolean))] as string[];
   const [{ data: mediaUrls }, { data: avatarUrls }] = await Promise.all([
@@ -34,7 +36,7 @@ export async function getStoryGroups() {
     if (!profile || !mediaUrl) continue;
     const group: StoryGroup = groupMap.get(story.author_id) ?? { authorId: story.author_id, username: profile.username, displayName: profile.display_name, avatarUrl: profile.avatar_path ? avatarMap.get(profile.avatar_path) ?? null : null, stories: [], allViewed: true };
     const viewed = story.author_id === user.id || viewedIds.has(story.id);
-    group.stories.push({ id: story.id, mediaUrl, mediaType: story.media_type, createdAt: story.created_at, expiresAt: story.expires_at, viewed, viewCount: story.story_views[0]?.count ?? 0 });
+    group.stories.push({ id: story.id, mediaUrl, mediaType: story.media_type, createdAt: story.created_at, expiresAt: story.expires_at, viewed, viewCount: story.story_views[0]?.count ?? 0, likeCount: (likes ?? []).filter((like) => like.story_id === story.id).length, liked: likedIds.has(story.id) });
     group.allViewed = group.allViewed && viewed;
     groupMap.set(story.author_id, group);
   }

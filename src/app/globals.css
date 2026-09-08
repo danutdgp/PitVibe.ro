@@ -19,3 +19,4 @@ button,a,input,select,textarea { -webkit-tap-highlight-color:transparent; }
 .button-primary:hover { transform:translateY(-1px); box-shadow:0 14px 40px rgba(124,58,237,.36); }
 .button-secondary { display:inline-flex; min-height:3rem; align-items:center; justify-content:center; border:1px solid var(--border); border-radius:999px; background:rgba(255,255,255,.045); padding:.75rem 1.3rem; font-weight:650; color:var(--foreground); transition:background 160ms ease,border-color 160ms ease; }
 .button-secondary:hover { border-color:rgba(167,139,250,.45); background:rgba(255,255,255,.075); }
+@keyframes gesture-fly { 0% { opacity:1; transform:translate(0,0) scale(1); } 100% { opacity:0; transform:translate(42px,-34px) scale(.55) rotate(18deg); } }

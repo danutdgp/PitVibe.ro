@@ -75,6 +75,7 @@ export async function completeProfile(formData: FormData) {
   const username = value(formData, "username").toLowerCase();
   const birthDate = value(formData, "data_nasterii");
   const city = value(formData, "oras") || "Pitești";
+  const gender = ["female", "male"].includes(value(formData, "gen")) ? value(formData, "gen") : null;
   const visibility = value(formData, "vizibilitate") === "private" ? "private" : "public";
   const areaId = Number(value(formData, "zona"));
   const selectedArea = Number.isSafeInteger(areaId) && areaId > 0 ? areaId : null;
@@ -89,7 +90,7 @@ export async function completeProfile(formData: FormData) {
     const { error: areaError } = await supabase.from("profile_areas").upsert({ user_id: user.id, area_id: selectedArea, visible: showArea });
     if (areaError) withMessage("/bun-venit", "eroare", "Zona aleasă nu a putut fi salvată.");
   }
-  const { error: profileError } = await supabase.from("profiles").update({ display_name: displayName, username, city, visibility, onboarding_completed: true }).eq("id", user.id);
+  const { error: profileError } = await supabase.from("profiles").update({ display_name: displayName, username, city, gender, visibility, onboarding_completed: true }).eq("id", user.id);
   if (profileError) withMessage("/bun-venit", "eroare", profileError.code === "23505" ? "Acest username este deja folosit." : "Profilul nu a putut fi salvat.");
   redirect("/acasa");
 }

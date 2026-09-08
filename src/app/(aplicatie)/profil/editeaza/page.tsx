@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { AvatarUploader } from "@/components/avatar-uploader";
+import { GenderForm } from "@/components/gender-form";
 import { FormMessage } from "@/components/form-message";
 import { respondFollow, updateProfile } from "@/app/actions/social";
 import { createClient } from "@/lib/supabase/server";

@@ -79,11 +79,48 @@ export async function respondFollow(data: FormData) {
   revalidatePath("/profil");
 }
 
+export async function sendGesture(data: FormData) {
+  const recipientId = value(data, "recipient_id"); const username = value(data, "username"); const { supabase, user } = await authenticated();
+  if (!recipientId || recipientId === user.id) return;
+  const { error } = await supabase.from("profile_gestures").upsert({ sender_id: user.id, recipient_id: recipientId, gesture_type: "rose" }, { onConflict: "sender_id,recipient_id", ignoreDuplicates: true });
+  if (error) redirect(`/profil/${username}?eroare_gest=${encodeURIComponent("Gestul nu a putut fi trimis.")}`);
+  revalidatePath(`/profil/${username}`); revalidatePath("/notificari");
+}
+
+export async function toggleGesture(data: FormData) {
+  const recipientId = value(data, "recipient_id"); const username = value(data, "username"); const { supabase, user } = await authenticated();
+  if (!recipientId || recipientId === user.id) return;
+  const { data: existing } = await supabase.from("profile_gestures").select("sender_id").eq("sender_id", user.id).eq("recipient_id", recipientId).maybeSingle();
+  const result = existing
+    ? await supabase.from("profile_gestures").delete().eq("sender_id", user.id).eq("recipient_id", recipientId)
+    : await supabase.from("profile_gestures").insert({ sender_id: user.id, recipient_id: recipientId, gesture_type: "rose" });
+  if (result.error) redirect(`/profil/${username}?eroare_gest=${encodeURIComponent("Gestul nu a putut fi actualizat.")}`);
+  revalidatePath(`/profil/${username}`); revalidatePath("/notificari");
+}
+
+export async function updateGender(data: FormData) {
+  const gender = value(data, "gen"); const { supabase, user } = await authenticated();
+  if (!["female", "male"].includes(gender)) redirect("/profil/editeaza?eroare=Selectează%20genul%20profilului.");
+  const { error } = await supabase.from("profiles").update({ gender }).eq("id", user.id);
+  if (error) redirect("/profil/editeaza?eroare=Genul%20nu%20a%20putut%20fi%20salvat.");
+  revalidatePath("/profil"); revalidatePath("/profil/editeaza"); redirect("/profil/editeaza?mesaj=Genul%20a%20fost%20salvat.");
+}
+
+export async function respondGesture(data: FormData) {
+  const senderId = value(data, "sender_id"); const decision = value(data, "decizie"); const { supabase, user } = await authenticated();
+  if (!senderId || senderId === user.id || !["accept", "reject"].includes(decision)) return;
+  if (decision === "accept") {
+    await supabase.rpc("accept_profile_gesture", { sender: senderId });
+    revalidatePath("/mesaje"); revalidatePath("/notificari");
+  }
+  revalidatePath("/notificari");
+}
+
 export async function updateProfile(data: FormData) {
   const { supabase, user } = await authenticated(); const username = value(data, "username").toLowerCase(); const displayName = value(data, "nume"); const bio = value(data, "descriere");
   if (!/^[a-z0-9_]{3,24}$/.test(username) || displayName.length < 2 || displayName.length > 50 || bio.length > 500) redirect("/profil/editeaza?eroare=Datele%20profilului%20nu%20sunt%20valide.");
-  const relationship = value(data, "status") || null; const interestIds = data.getAll("interese").map(Number).filter(Number.isInteger).slice(0, 10); const datingEnabled = data.get("dating") === "on"; const allowedIntentions = new Set(["friendship", "relationship", "activities"]); const intentions = datingEnabled ? data.getAll("intentii").map(String).filter((item) => allowedIntentions.has(item)) : [];
-  const { error } = await supabase.from("profiles").update({ username, display_name: displayName, bio, city: value(data, "oras"), relationship_status: relationship, show_relationship_status: Boolean(relationship && data.get("arata_status")), dating_discovery_enabled: datingEnabled, dating_intentions: intentions }).eq("id", user.id);
+  const relationship = value(data, "status") || null; const gender = ["female", "male"].includes(value(data, "gen")) ? value(data, "gen") : null; const interestIds = data.getAll("interese").map(Number).filter(Number.isInteger).slice(0, 10); const datingEnabled = data.get("dating") === "on"; const allowedIntentions = new Set(["friendship", "relationship", "activities"]); const intentions = datingEnabled ? data.getAll("intentii").map(String).filter((item) => allowedIntentions.has(item)) : [];
+  const { error } = await supabase.from("profiles").update({ username, display_name: displayName, bio, city: value(data, "oras"), gender, relationship_status: relationship, show_relationship_status: Boolean(relationship && data.get("arata_status")), dating_discovery_enabled: datingEnabled, dating_intentions: intentions }).eq("id", user.id);
   if (error) redirect(`/profil/editeaza?eroare=${encodeURIComponent(error.code === "23505" ? "Username-ul este deja folosit." : "Profilul nu a putut fi salvat.")}`);
   await supabase.from("profile_interests").delete().eq("user_id", user.id);
   if (interestIds.length) await supabase.from("profile_interests").insert(interestIds.map((interest_id) => ({ user_id: user.id, interest_id })));

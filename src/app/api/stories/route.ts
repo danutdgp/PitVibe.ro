@@ -31,12 +31,16 @@ export async function POST(request: Request) {
   const kind = sniff(bytes);
   if (!kind || kind.mime !== file.type) return NextResponse.json({ error: "Fișierul ales nu este valid sau formatul nu este acceptat." }, { status: 400 });
 
+  const { data: archived } = await supabase.from("stories").select("storage_bytes").eq("author_id", user.id).lte("expires_at", new Date().toISOString());
+  const archivedBytes = (archived ?? []).reduce((total, story) => total + Number(story.storage_bytes ?? 0), 0);
+  if ((archived?.length ?? 0) >= 100 || archivedBytes + bytes.byteLength > 2 * 1024 * 1024 * 1024) return NextResponse.json({ error: "Arhiva ta este plină. Șterge stories vechi pentru a publica unul nou." }, { status: 400 });
+
   const storyId = crypto.randomUUID();
   const path = `${user.id}/${storyId}.${kind.extension}`;
   const { error: uploadError } = await supabase.storage.from("story-media").upload(path, bytes, { contentType: kind.mime, upsert: false });
   if (uploadError) return NextResponse.json({ error: "Fișierul nu a putut fi încărcat." }, { status: 500 });
 
-  const { error } = await supabase.from("stories").insert({ id: storyId, author_id: user.id, media_path: path, media_type: kind.mediaType });
+  const { error } = await supabase.from("stories").insert({ id: storyId, author_id: user.id, media_path: path, media_type: kind.mediaType, storage_bytes: bytes.byteLength });
   if (error) {
     await supabase.storage.from("story-media").remove([path]);
     return NextResponse.json({ error: "Story-ul nu a putut fi publicat." }, { status: 500 });
