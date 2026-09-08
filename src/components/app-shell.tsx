@@ -14,7 +14,6 @@ export function AppShell({ children, displayName, username, avatarUrl, notificat
     <aside className="fixed bottom-0 left-0 top-0 z-30 hidden w-[250px] border-r border-white/8 bg-[#0b0911]/80 p-6 backdrop-blur-xl md:flex md:flex-col">
       <Brand />
       <AppNav avatarUrl={avatarUrl} displayName={displayName} notificationCount={notificationCount} />
-      <div className="mt-3"><ToolsMenu desktop /></div>
       <div className="mt-auto">
         {isStaff && <Link className="mb-3 block rounded-xl bg-amber-400/10 px-3 py-2 text-sm font-bold text-amber-200" href="/admin">Panou administrare</Link>}
         <div className="rounded-2xl border border-white/8 bg-white/[.035] p-3">

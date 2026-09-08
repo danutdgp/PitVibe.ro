@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const items = [
-  ["/acasa", "⌂", "Acasă"], ["/descopera", "⌕", "Descoperă"], ["/publica", "+", "Publică"], ["/iesim", "✦", "Ieșim?"], ["/zone", "⌖", "Zone"], ["/mesaje", "✉", "Mesaje", "desktop"], ["/notificari", "♢", "Notificări", "desktop"], ["/profil", "○", "Profil"],
+  ["/acasa", "⌂", "Acasă"], ["/descopera", "⌕", "Descoperă"], ["/publica", "+", "Publică"], ["/iesim", "✦", "Ieșim?"], ["/zone", "⌖", "Zone"], ["/conexiuni-ratate", "◎", "Întâlniri ratate", "desktop"], ["/mesaje", "✉", "Mesaje", "desktop"], ["/notificari", "♢", "Notificări", "desktop"], ["/potriviri", "♡", "Potriviri", "desktop"], ["/profil", "○", "Profil"],
 ];
 
 export function AppNav({ avatarUrl, displayName, notificationCount = 0 }: { avatarUrl: string | null; displayName: string; notificationCount?: number }) {
