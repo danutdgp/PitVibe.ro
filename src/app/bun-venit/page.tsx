@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
-import Link from "next/link";
-import { completeProfile } from "../autentificare/actions";
+import { completeProfile, signOut } from "../autentificare/actions";
 import { Brand } from "@/components/brand";
 import { FormMessage } from "@/components/form-message";
 import { createClient } from "@/lib/supabase/server";
@@ -20,7 +19,7 @@ export default async function OnboardingPage({ searchParams }: { searchParams: P
   const neighborhoods = areas?.filter((area) => area.kind === "neighborhood") ?? [];
   const nearby = areas?.filter((area) => area.kind === "nearby") ?? [];
 
-  return <main className="mx-auto min-h-screen max-w-xl px-5 py-8 sm:py-14"><div className="flex items-center justify-between gap-4"><Brand /><Link href="/auth/iesire" className="text-sm font-semibold text-red-300">Ieși din acest cont</Link></div><div className="mt-12"><span className="text-sm font-bold text-violet-300">Pasul 1 din 1</span><h1 className="mt-2 text-4xl font-black tracking-[-.045em]">Cum te prezentăm comunității?</h1><p className="mt-3 leading-7 text-[#aaa4b8]">Cerem doar datele necesare. Data nașterii rămâne privată, iar tu decizi dacă zona apare pe profil.</p></div><div className="card mt-8 p-5 sm:p-7"><FormMessage error={params.eroare} /><form action={completeProfile} className="space-y-5">
+  return <main className="mx-auto min-h-screen max-w-xl px-5 py-8 sm:py-14"><div className="flex items-center justify-between gap-4"><Brand /><form action={signOut}><button type="submit" className="text-sm font-semibold text-red-300">Ieși din acest cont</button></form></div><div className="mt-12"><span className="text-sm font-bold text-violet-300">Pasul 1 din 1</span><h1 className="mt-2 text-4xl font-black tracking-[-.045em]">Cum te prezentăm comunității?</h1><p className="mt-3 leading-7 text-[#aaa4b8]">Cerem doar datele necesare. Data nașterii rămâne privată, iar tu decizi dacă zona apare pe profil.</p></div><div className="card mt-8 p-5 sm:p-7"><FormMessage error={params.eroare} /><form action={completeProfile} className="space-y-5">
     <label className="block"><span className="mb-2 block text-sm font-semibold">Nume afișat</span><input className="field" name="nume" minLength={2} maxLength={50} required autoComplete="name" /></label>
     <label className="block"><span className="mb-2 block text-sm font-semibold">Username unic</span><div className="relative"><span className="absolute left-3 top-3 text-[#777181]">@</span><input className="field pl-8" name="username" minLength={3} maxLength={24} pattern="[a-z0-9_]+" required autoCapitalize="none" /></div><span className="mt-2 block text-xs text-[#827b8e]">Litere mici, cifre și underscore.</span></label>
     <div className="grid gap-5 sm:grid-cols-2"><label className="block"><span className="mb-2 block text-sm font-semibold">Data nașterii <span className="font-normal text-[#827b8e]">(privată)</span></span><input className="field [color-scheme:dark]" name="data_nasterii" type="date" required /></label><label className="block"><span className="mb-2 block text-sm font-semibold">Oraș declarat</span><input className="field" name="oras" defaultValue="Pitești" maxLength={60} required /></label></div>
